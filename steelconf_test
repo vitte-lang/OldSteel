@@ -1,0 +1,280 @@
+!muf 4
+
+[workspace]
+  .set name "pascal-test"
+  .set root "."
+..
+
+[default]
+  .set target "app"
+  .set profile "release"
+  .set mode "release"
+..
+
+[profile release]
+  .set opt "3"
+..
+
+[profile legacy-386]
+  .set arch "x86"
+  .set os "linux"
+..
+
+[profile legacy-pentium]
+  .set arch "x86"
+  .set os "linux"
+..
+
+[profile legacy-k6]
+  .set arch "x86"
+  .set os "linux"
+..
+
+[profile legacy-k6-3]
+  .set arch "x86"
+  .set os "linux"
+..
+
+[profile legacy-pentium-m]
+  .set arch "x86"
+  .set os "linux"
+..
+
+[profile legacy-athlon-xp]
+  .set arch "x86"
+  .set os "linux"
+..
+
+[profile legacy-duron]
+  .set arch "x86"
+  .set os "linux"
+..
+
+[profile legacy-sempron]
+  .set arch "x86"
+  .set os "linux"
+..
+
+[profile legacy-c3]
+  .set arch "x86"
+  .set os "linux"
+..
+
+[profile legacy-winchip]
+  .set arch "x86"
+  .set os "linux"
+..
+
+[profile legacy-ppc]
+  .set arch "ppc"
+  .set os "linux"
+..
+
+[profile legacy-sparc]
+  .set arch "sparc"
+  .set os "linux"
+..
+
+[profile legacy-sparc64]
+  .set arch "sparc64"
+  .set os "linux"
+..
+
+[profile legacy-mips]
+  .set arch "mips"
+  .set os "linux"
+..
+
+[profile legacy-mips64]
+  .set arch "mips64"
+  .set os "linux"
+..
+
+[profile legacy-m68k]
+  .set arch "m68k"
+  .set os "morphos"
+..
+
+[profile legacy-os2]
+  .set arch "x86"
+  .set os "os2"
+..
+
+[profile legacy-beos]
+  .set arch "x86"
+  .set os "beos"
+..
+
+[profile legacy-qnx]
+  .set arch "x86"
+  .set os "qnx"
+..
+
+[profile legacy-plan9]
+  .set arch "x86"
+  .set os "plan9"
+..
+
+[profile legacy-amiga]
+  .set arch "m68k"
+  .set os "amiga"
+..
+
+[profile legacy-aros]
+  .set arch "ppc"
+  .set os "aros"
+..
+
+[profile legacy-morphos]
+  .set arch "ppc"
+  .set os "morphos"
+..
+
+[profile legacy-ppc64]
+  .set arch "ppc64"
+  .set os "linux"
+..
+
+[profile legacy-alpha]
+  .set arch "alpha"
+  .set os "tru64"
+..
+
+[profile legacy-hppa]
+  .set arch "hppa"
+  .set os "hpux"
+..
+
+[profile legacy-aix]
+  .set arch "ppc"
+  .set os "aix"
+..
+
+[profile legacy-irix]
+  .set arch "mips"
+  .set os "irix"
+..
+
+[profile legacy-ultrix]
+  .set arch "mips"
+  .set os "ultrix"
+..
+
+[profile legacy-xenix]
+  .set arch "x86"
+  .set os "xenix"
+..
+
+[profile legacy-minix]
+  .set arch "x86"
+  .set os "minix"
+..
+
+[profile legacy-vax]
+  .set arch "vax"
+  .set os "vms"
+..
+
+[profile legacy-m88k]
+  .set arch "m88k"
+  .set os "sysv"
+..
+
+[profile legacy-s390]
+  .set arch "s390"
+  .set os "linux"
+..
+
+[profile legacy-sh4]
+  .set arch "sh4"
+  .set os "linux"
+..
+
+[profile legacy-armv4]
+  .set arch "arm"
+  .set os "linux"
+..
+
+[profile legacy-armv5]
+  .set arch "arm"
+  .set os "linux"
+..
+
+[profile legacy-armv6]
+  .set arch "arm"
+  .set os "linux"
+..
+
+[profile legacy-armv7]
+  .set arch "arm"
+  .set os "linux"
+..
+
+[profile legacy-arm64]
+  .set arch "aarch64"
+  .set os "linux"
+..
+
+[profile legacy-riscv32]
+  .set arch "riscv32"
+  .set os "linux"
+..
+
+[profile legacy-riscv64]
+  .set arch "riscv64"
+  .set os "linux"
+..
+
+[profile legacy-arc]
+  .set arch "arc"
+  .set os "linux"
+..
+
+[profile legacy-m68k-060]
+  .set arch "m68k"
+  .set os "morphos"
+..
+
+[profile legacy-sparc-ultra]
+  .set arch "sparc64"
+  .set os "linux"
+..
+
+[profile legacy-mipsel]
+  .set arch "mipsel"
+  .set os "linux"
+..
+
+[profile legacy-mipseb]
+  .set arch "mips"
+  .set os "linux"
+..
+
+[target app]
+  .set output "bin/app"
+..
+
+[tool echoer]
+  .exec "echo tool"
+..
+
+[bake app]
+  .needs "lib"
+  .use "echoer"
+  .make "steelconf_test" "steel.pas"
+  .output "artifacts/out3" "artifacts/out4"
+  .exec "echo build"
+  [run step1]
+    .use "echoer"
+    .exec "echo step1"
+    [run step1a]
+      .exec "echo step1a"
+    ..
+  ..
+..
+
+[bake lib]
+  .make "steel_types.pas"
+  .output "artifacts/lib.out"
+  .exec "echo lib"
+..

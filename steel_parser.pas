@@ -64,6 +64,8 @@ begin
       Result.Kind := dkUse
     else if Op = 'run' then
       Result.Kind := dkRun
+    else if Op = 'needs' then
+      Result.Kind := dkNeeds
     else
       Result.Kind := dkUnknown;
 

@@ -18,6 +18,7 @@ type
     dkRef,
     dkUse,
     dkRun,
+    dkNeeds,
     dkUnknown
   );
 

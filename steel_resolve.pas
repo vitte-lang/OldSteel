@@ -42,6 +42,7 @@ var
   Key, Val: string;
   ProfileName: string;
   TargetName: string;
+  EnvOverride: string;
 begin
   Res.WorkspaceName := '';
   Res.WorkspaceRoot := '';
@@ -80,9 +81,18 @@ begin
     end else if Block.Tag = 'default' then begin
       for j := 0 to Length(Block.Directives) - 1 do begin
         Dir := Block.Directives[j];
-        if (Dir.Kind = dkSet) and (Dir.Name = 'target') then begin
+        if Dir.Kind = dkSet then begin
+          Key := Dir.Name;
           if Length(Dir.Args) > 0 then
-            Res.DefaultTarget := Dir.Args[0];
+            Val := Dir.Args[0]
+          else
+            Val := '';
+          if Key = 'target' then
+            Res.DefaultTarget := Val;
+          if (Key = 'profile') and (Res.SelectedProfile = '') then
+            Res.SelectedProfile := Val;
+          if Key <> '' then
+            Res.Vars.Values[Key] := Val;
         end;
       end;
     end;
@@ -132,6 +142,24 @@ begin
     end;
   end;
 
+  for i := 0 to Length(FileIn.Blocks) - 1 do begin
+    Block := FileIn.Blocks[i];
+    if (Block.Tag = 'target') and (Block.Name = TargetName) then begin
+      for j := 0 to Length(Block.Directives) - 1 do begin
+        Dir := Block.Directives[j];
+        if Dir.Kind = dkSet then begin
+          Key := Dir.Name;
+          if Length(Dir.Args) > 0 then
+            Val := Dir.Args[0]
+          else
+            Val := '';
+          if Key <> '' then
+            Res.Vars.Values[Key] := Val;
+        end;
+      end;
+    end;
+  end;
+
   for i := 0 to Opt.Defines.Count - 1 do begin
     Key := Opt.Defines.Names[i];
     Val := Opt.Defines.ValueFromIndex[i];
@@ -146,18 +174,30 @@ begin
   end;
 
   Res.HostOS := Opt.OverrideOS;
-  if Res.HostOS = '' then
-    Res.HostOS := DetectOS;
+  if Res.HostOS = '' then begin
+    EnvOverride := GetEnvironmentVariable('STEEL_OS');
+    if EnvOverride <> '' then
+      Res.HostOS := EnvOverride
+    else
+      Res.HostOS := DetectOS;
+  end;
   if (Res.HostOS = '') or (Res.HostOS = 'unknown') then
     Res.HostOS := EnvFallbackOS;
+  Res.HostOS := NormalizeOS(Res.HostOS);
   if Res.HostOS = '' then
     Res.HostOS := 'unknown';
 
   Res.HostArch := Opt.OverrideArch;
-  if Res.HostArch = '' then
-    Res.HostArch := DetectArch;
+  if Res.HostArch = '' then begin
+    EnvOverride := GetEnvironmentVariable('STEEL_ARCH');
+    if EnvOverride <> '' then
+      Res.HostArch := EnvOverride
+    else
+      Res.HostArch := DetectArch;
+  end;
   if (Res.HostArch = '') or (Res.HostArch = 'unknown') then
     Res.HostArch := EnvFallbackArch;
+  Res.HostArch := NormalizeArch(Res.HostArch);
   if Res.HostArch = '' then
     Res.HostArch := 'unknown';
 

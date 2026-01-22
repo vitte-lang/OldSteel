@@ -140,6 +140,60 @@ begin
   WriteLn(F, '..');
 end;
 
+procedure EmitDefaultSets(var F: TextFile; const FileIn: TMufFile; const Res: TResolvedConfig);
+var
+  i, j: Integer;
+  Block: TBlock;
+  Dir: TDirective;
+  Line: string;
+begin
+  WriteLn(F, '');
+  WriteLn(F, '[defaults]');
+  for i := 0 to Length(FileIn.Blocks) - 1 do begin
+    Block := FileIn.Blocks[i];
+    if Block.Tag = 'default' then begin
+      for j := 0 to Length(Block.Directives) - 1 do begin
+        Dir := Block.Directives[j];
+        if Dir.Kind = dkSet then begin
+          Line := '  .set ' + QuoteIfNeeded(Dir.Name);
+          if Length(Dir.Args) > 0 then
+            Line := Line + ' ' + QuoteIfNeeded(ExpandVars(Dir.Args[0], Res.Vars));
+          WriteLn(F, Line);
+        end;
+      end;
+      Break;
+    end;
+  end;
+  WriteLn(F, '..');
+end;
+
+procedure EmitTargetSets(var F: TextFile; const FileIn: TMufFile; const Res: TResolvedConfig);
+var
+  i, j: Integer;
+  Block: TBlock;
+  Dir: TDirective;
+  Line: string;
+begin
+  WriteLn(F, '');
+  WriteLn(F, '[target.sets]');
+  for i := 0 to Length(FileIn.Blocks) - 1 do begin
+    Block := FileIn.Blocks[i];
+    if (Block.Tag = 'target') and (Block.Name = Res.SelectedTarget) then begin
+      for j := 0 to Length(Block.Directives) - 1 do begin
+        Dir := Block.Directives[j];
+        if Dir.Kind = dkSet then begin
+          Line := '  .set ' + QuoteIfNeeded(Dir.Name);
+          if Length(Dir.Args) > 0 then
+            Line := Line + ' ' + QuoteIfNeeded(ExpandVars(Dir.Args[0], Res.Vars));
+          WriteLn(F, Line);
+        end;
+      end;
+      Break;
+    end;
+  end;
+  WriteLn(F, '..');
+end;
+
 procedure EmitSteelLog(const Path: string; const FileIn: TMufFile; const Res: TResolvedConfig);
 var
   F: TextFile;
@@ -167,6 +221,8 @@ begin
     WriteLn(F, '[target]');
     WriteLn(F, '  name "', Res.SelectedTarget, '"');
     WriteLn(F, '..');
+    EmitDefaultSets(F, FileIn, Res);
+    EmitTargetSets(F, FileIn, Res);
     WriteLn(F, '');
     WriteLn(F, '[paths]');
     WriteLn(F, '  root "', Root, '"');
